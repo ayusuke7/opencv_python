@@ -1,5 +1,5 @@
 #######################################################
-#     Detecção de Placas atraves de contornos         #
+#     Detecção de Placas atraves de contornos  HD     #
 #                       by AY7                        #
 #######################################################
 
@@ -9,30 +9,32 @@ import tkinter
 import pytesseract
 import cv2
 
-def desenhaContornos(contornos, imagem):
+def findPlace(contornos, imagem):#
+
     for c in contornos:
-        #perimetro do contorno, verifica se o contorno é fechado
+        # perimetro do contorno, verifica se o contorno é fechado
         perimetro = cv2.arcLength(c, True)
-        if perimetro > 80:
+        if perimetro > 200 and perimetro < 600:
            #aproxima os contornos da forma correspondente
            approx = cv2.approxPolyDP(c, 0.03 * perimetro, True)
            #verifica se é um quadrado ou retangulo de acordo com a qtd de vertices
            if len(approx) == 4:
-               #cv2.drawContours(imagem, [c], -1, (0, 255, 0), 1)
-                (x, y, a, l) = cv2.boundingRect(c)
-                cv2.rectangle(imagem, (x, y), (x + a, y + l), (0, 255, 0), 2)
-                roi = imagem[y:y + l, x:x + a]
-                cv2.imwrite("C:/Tesseract-OCR/Saidas/roi.jpg", roi)
+             #Contorna a placa atraves dos contornos encontrados
+             #cv2.drawContours(imagem, [c], -1, (0, 255, 0), 2)
+             (x, y, lar, alt) = cv2.boundingRect(c)
+             cv2.rectangle(imagem, (x, y), (x + lar, y + alt), (0, 255, 0), 2)
+             #segmenta a placa da imagem
+             roi = imagem[(y+15):y+alt, x:x+lar]
+             cv2.imwrite("C:/Tesseract-OCR/saidas/roi.jpg", roi)
 
     return imagem
 
-    # Captura ou Video
-
 def reconhecimentoOCR(path_img):
+
     entrada = cv2.imread(path_img + ".jpg")
     # cv2.imshow("ENTRADA", img)
 
-    # amplia a imagem da placa em 4
+    # redmensiona a imagem da placa em 4x
     img = cv2.resize(entrada, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
 
     # Converte para escala de cinza
@@ -50,41 +52,38 @@ def reconhecimentoOCR(path_img):
     cv2.imwrite(path_img + "-ocr.jpg", img)
     imagem = Image.open(path_img + "-ocr.jpg")
     saida = pytesseract.image_to_string(imagem, lang='eng')
-    print(saida)
-    texto = removerChars(saida)
+
+    if len(saida) > 0:
+        print(saida)
+        texto = removerChars(saida)
+    else:
+        texto = "Reconhecimento Falho"
+
     janela = tkinter.Tk()
     tkinter.Label(janela, text=texto, font=("Helvetica", 50)).pack()
     janela.mainloop()
 
-    # cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-def removerChars(self, text):
+def removerChars(text):
     str = "!@#%¨&*()_+:;><^^}{`?|~¬\/=,.'ºª»‘"
     for x in str:
         text = text.replace(x, '')
     return text
 
-video = cv2.VideoCapture('resource\\video1-720p-edit2.mp4')
+#Captura ou Video
+video = cv2.VideoCapture('resource\\video1-720p.mkv')
 
-while True:
+while(video.isOpened()):
 
     ret, frame = video.read()
 
-    # limite horizontal
-    cv2.line(frame, (0, 350), (860, 350), (0, 0, 255), 1)
-    # limite vertical 1
-    cv2.line(frame, (220, 0), (220, 480), (0, 0, 255), 1)
-    # limite vertical 2
-    cv2.line(frame, (500, 0), (500, 480), (0, 0, 255), 1)
+    if(ret == False):
+        break
 
-    cv2.imshow('SAIDA', frame)
-
-    # região de busca
-    res = frame[350:, 220:500]
+    #area de localização
+    area = frame[500: , 300:800]
 
     # escala de cinza
-    img_result = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
+    img_result = cv2.cvtColor(area, cv2.COLOR_BGR2GRAY)
 
     # limiarização
     ret, img_result = cv2.threshold(img_result, 90, 255, cv2.THRESH_BINARY)
@@ -95,17 +94,22 @@ while True:
     # lista os contornos
     img, contornos, hier = cv2.findContours(img_result, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
-    desenhaContornos(contornos, res)
+    # limite horizontal
+    cv2.line(frame, (0, 500), (1280, 500), (0, 0, 255), 1)
+    # limite vertical 1
+    cv2.line(frame, (300, 0), (300, 720), (0, 0, 255), 1)
+    # limite vertical 2
+    cv2.line(frame, (800, 0), (800, 720), (0, 0, 255), 1)
 
-    cv2.imshow('RES', res)
+    cv2.imshow('FRAME', frame)
 
-    if cv2.waitKey(1) == ord('q'):
+    findPlace(contornos, area)
+
+    cv2.imshow('RES', area)
+
+    if cv2.waitKey(1) & 0xff == ord('q'):
         break
 
-reconhecimentoOCR("C:/Tesseract-OCR/Saidas/roi")
-
 video.release()
+reconhecimentoOCR("C:/Tesseract-OCR/saidas/roi")
 cv2.destroyAllWindows()
-
-
-

@@ -25,34 +25,42 @@ def findPlace(contornos, imagem):#
              cv2.rectangle(imagem, (x, y), (x + lar, y + alt), (0, 255, 0), 2)
              #segmenta a placa da imagem
              roi = imagem[(y+15):y+alt, x:x+lar]
+             #salva a imagem segmentada em "C:/Tesseract-OCR/saidas/"
              cv2.imwrite("C:/Tesseract-OCR/saidas/roi.jpg", roi)
-
+                
     return imagem
 
 def reconhecimentoOCR(path_img):
 
+    #Ler a entrada da imagem e salva na variavel entrada
     entrada = cv2.imread(path_img + ".jpg")
     # cv2.imshow("ENTRADA", img)
 
-    # redmensiona a imagem da placa em 4x
+    # aumenta a resoluca da imagem da placa em 4x
     img = cv2.resize(entrada, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
 
     # Converte para escala de cinza
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # cv2.imshow("Escala Cinza", img)
 
-    # Binariza imagem
+    # Binariza a imagem (preto e branco)
     ret, img = cv2.threshold(img, 70, 255, cv2.THRESH_BINARY)
     cv2.imshow("Limiar", img)
 
-    # Desfoque na Imagem
+    # Aplica um desfoque na Imagem
     img = cv2.GaussianBlur(img, (5, 5), 0)
     # cv2.imshow("Desfoque", img)
-
+    
+    # Grava o resultado no endereco path+/ocr.jpg
     cv2.imwrite(path_img + "-ocr.jpg", img)
+    
+    # Abre a imagem gravada para ser feita o reconhecimento OCR
+    # e salva o resultado na variavel saida
     imagem = Image.open(path_img + "-ocr.jpg")
     saida = pytesseract.image_to_string(imagem, lang='eng')
 
+    # Realiza um filtro nos caracteres obtidos 
+    # eliminando possiveis ruidos reconhecidos
     if len(saida) > 0:
         print(saida)
         texto = removerChars(saida)

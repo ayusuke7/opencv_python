@@ -11,4 +11,8 @@ Video de demonstração : https://www.youtube.com/watch?v=oTlPAt6nupU
 
 Artigo Sobre : http://alexandrehenrique.esy.es/
 
+Observação: No caso do Video dispnibilizado da apresentação do Reconhecimento, foram utilizados apenas os Scripts "EncontrarPlaca" e "EncontrarPlacaHD", que se diferenciam apenas a entrada que no caso são videos 480p e 720p. 
 
+Não se prendam apenas em copiar e colar o codigo base, no site acima tem o livro em PDF "Python e OpenCV" na qual foi retirado o conteudo necessario, Vejam o funionamento da função e como ela se comporta no contexto, o que cada passo e comentario quer dizer, que com o basico de PDI qualquer pessoa conseguirá utilizar o Reconhecimento de Placas por Retangulos.
+
+Boa Sorte!

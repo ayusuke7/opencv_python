@@ -8,8 +8,7 @@ Bibliotecas: OpenCV - https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_tutor
 & Tesseract-OCR - https://github.com/madmaze/pytesseract
 
 Video de demonstração : https://www.youtube.com/watch?v=oTlPAt6nupU
-
-Artigo Sobre : http://alexandrehenrique.esy.es/
+Artigo Sobre : https://drive.google.com/file/d/1zAbVSl-AKDLUeEcDhEHDRGX9bqK-2CRF/view
 
 Observação: No caso do Video dispnibilizado da apresentação do Reconhecimento, foram utilizados apenas os Scripts "EncontrarPlaca" e "EncontrarPlacaHD", que se diferenciam apenas a entrada que no caso são videos 480p e 720p. 
 

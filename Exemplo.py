@@ -96,7 +96,7 @@ def ocrGoogleVisionApi():
     with open("output/roi.png", "rb") as img_file:
         my_base64 = base64.b64encode(img_file.read())
 
-    url = "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyAM_u7Wflc_BCOlSbvjyNp8l-JeMr14Dzs"
+    url = "https://vision.googleapis.com/v1/images:annotate?key=[API-KEY]"
     data = {
         'requests': [
             {
